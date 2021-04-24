@@ -15,7 +15,7 @@ let json = [
         targets: [
             {
                 "ref": "1112",
-                "type": "double"
+                "type": "single"
             },
             {
                 "ref": "1113",
@@ -31,7 +31,7 @@ let json = [
             }
         ],
         color: 0xff0000,
-        radius: 0.1,
+        radius: 0.3,
         position: [0, 0, 0]
     },
     {
@@ -39,10 +39,10 @@ let json = [
         uid: '1112',
         targets: [{
                 "ref": "1111",
-                "type": "double"
+                "type": "single"
             }],
         color: 0xff0000,
-        radius: 0.1,
+        radius: 0.2,
         position: [0, 0.5, 1.5]
     },
     {
@@ -53,7 +53,7 @@ let json = [
                 "type": "single"
             }],
         color: 0xff0000,
-        radius: 0.1,
+        radius: 0.2,
         position: [0, 1, 0]
     },
     {
@@ -64,7 +64,7 @@ let json = [
                 "type": "triple"
             }],
         color: 0xff0000,
-        radius: 0.1,
+        radius: 0.2,
         position: [1, 0, 0]
     },
     {
@@ -75,7 +75,7 @@ let json = [
                 "type": "double"
             }],
         color: 0xff0000,
-        radius: 0.1,
+        radius: 0.2,
         position: [1, 0, 1]
     }
 ];
@@ -162,6 +162,10 @@ let json = [
     pointLight.position.y = 0
     pointLight.position.z = 5
     scene.add(pointLight)
+
+    //ambient light
+    const light = new THREE.AmbientLight( 0x404040 ); // soft white light
+    scene.add( light );
     
     const theme = {
         mode: "dark"
@@ -225,7 +229,8 @@ let json = [
         const elapsedTime = clock.getElapsedTime()
         
         // Update objects
-        // root.rotation.y = .5 * elapsedTime
+        root.rotation.y = .5 * elapsedTime
+        root.rotation.x = .1 * elapsedTime
         
         // Update Orbital Controls
         controls.update()
@@ -251,29 +256,29 @@ let json = [
         grp.position.set((data1.x + data2.x) / 2, (data1.y + data2.y) / 2, (data1.z + data2.z) / 2)
         grp.add(obj)
         grp.lookAt(data2)
-        console.log(root.add(grp))
+        root.add(grp)
     };
-
+    
     const addDoubleBond = (data1, data2) => {
         let distance = data1.distanceTo(data2)
-        let geometry = new THREE.CylinderGeometry(0.05, 0.05, distance)
+        let geometry = new THREE.CylinderGeometry(0.042, 0.042, distance)
         let material = new THREE.MeshPhongMaterial({ color: new THREE.Color(0xffffff) })
         let obj1 = new THREE.Mesh(geometry, material)
         let obj2 = new THREE.Mesh(geometry, material)
         obj1.rotateX(Math.PI / 2)
         obj2.rotateX(Math.PI / 2)
-        obj1.position.x += .01
-        obj2.position.x -= .01
+        obj1.position.x += .05
+        obj2.position.x -= .05
         let grp = new THREE.Group()
         grp.add(obj1, obj2)
         grp.position.set((data1.x + data2.x) / 2, (data1.y + data2.y) / 2, (data1.z + data2.z) / 2)
         grp.lookAt(data2)
-        console.log(root.add(grp))
+        root.add(grp)
     }
     
     const addTripleBond = (data1, data2) => {
         let distance = data1.distanceTo(data2)
-        let geometry = new THREE.CylinderGeometry(0.05, 0.05, distance)
+        let geometry = new THREE.CylinderGeometry(0.039, 0.039, distance)
         let material = new THREE.MeshPhongMaterial({ color: new THREE.Color(0xffffff) })
         let obj1 = new THREE.Mesh(geometry, material)
         let obj2 = new THREE.Mesh(geometry, material)
@@ -281,13 +286,13 @@ let json = [
         obj1.rotateX(Math.PI / 2)
         obj2.rotateX(Math.PI / 2)
         obj3.rotateX(Math.PI / 2)
-        obj1.position.x += .015
-        obj3.position.x += .015
+        obj1.position.x += .08
+        obj3.position.x += .08
         let grp = new THREE.Group()
         grp.add(obj1, obj2, obj3)
         grp.position.set((data1.x + data2.x) / 2, (data1.y + data2.y) / 2, (data1.z + data2.z) / 2)
         grp.lookAt(data2)
-        console.log(root.add(grp))
+        root.add(grp)
     }
 
     const addSphere = (data) => {
@@ -301,32 +306,25 @@ let json = [
     const load = (data) => {
         if (!data) throw new Error('Data not found..!')
         data.forEach(e => {
-
             addSphere(e)
-            let bond = data.find(m => {
+            data.forEach(m => {
                 let index = m.targets?.findIndex(a => a.ref == e.uid)
-                if (index && index !== -1){
+                if (index !== -1){
                     if (m.targets[index].type == 'double') {
                         addDoubleBond(new THREE.Vector3(e.position[0], e.position[1], e.position[2]), new THREE.Vector3(m.position[0], m.position[1], m.position[2]));
                         m.targets.splice(index, 1)
-                        return false;
                     }
                     else if (m.targets[index].type == 'triple') {
                         addTripleBond(new THREE.Vector3(e.position[0], e.position[1], e.position[2]), new THREE.Vector3(m.position[0], m.position[1], m.position[2]));
                         m.targets.splice(index, 1)
-                        return false;
                     }
-                    else{
+                    else {
+                        addSingleBond(new THREE.Vector3(e.position[0], e.position[1], e.position[2]), new THREE.Vector3(m.position[0], m.position[1], m.position[2]))
                         m.targets.splice(index, 1)
-                        console.log('tes')
-                        return true;
                     }
-                } else return false;
+                }
             })
-            if (bond) addSingleBond(new THREE.Vector3(e.position[0], e.position[1], e.position[2]), new THREE.Vector3(bond.position[0], bond.position[1], bond.position[2]))
-
         });
-        console.log(root)
     }
 
 load(json)

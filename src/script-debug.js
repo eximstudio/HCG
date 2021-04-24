@@ -131,7 +131,7 @@ let json = [
         }
     }
     
-    let canvas, scene, camera, root, control, renderer, geometry;
+    let canvas, scene, camera, root, control, renderer, labelRenderer;
 
     // Debug
     let gui = new GUI({
@@ -187,7 +187,13 @@ let json = [
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     control = new TrackballControls(camera, renderer.domElement)    
     
-    let controls = new OrbitControls(camera, renderer.domElement)
+    labelRenderer = new CSS2DRenderer();
+    labelRenderer.setSize( window.innerWidth, window.innerHeight );
+    labelRenderer.domElement.style.position = 'absolute';
+    labelRenderer.domElement.style.top = '0px';
+    document.body.appendChild( labelRenderer.domElement );
+
+    let controls = new OrbitControls(camera, labelRenderer.domElement)
     
     gui.addInput(theme, 'mode', {
         options:{
@@ -222,7 +228,9 @@ let json = [
         // Update renderer
         renderer.setSize(sizes.width, sizes.height)
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+        labelRenderer.setSize( window.innerWidth, window.innerHeight );
     })
+
 
     const clock = new THREE.Clock()
 
@@ -240,6 +248,7 @@ let json = [
         
         // Render
         renderer.render(scene, camera)
+        labelRenderer.render( scene, camera )
         
         // Call animate again on the next frame
         window.requestAnimationFrame(animate)
@@ -304,6 +313,10 @@ let json = [
         let obj = new THREE.Mesh(geometry, material)
         obj.position.set(data.position[0], data.position[1], data.position[2])
         root.add(obj)
+        const earthDiv = document.createElement( 'div' );
+        earthDiv.className = 'label';
+        earthDiv.textContent = data.name;
+        obj.add(new CSS2DObject( earthDiv ))
     }
 
     const load = (data) => {

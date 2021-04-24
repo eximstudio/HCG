@@ -138,6 +138,8 @@ let json = [
         title: 'GUI',
         expanded: true,
     })
+    // @ts-ignore
+    gui.containerElem_.style.zIndex = '1'
      
     // Sizes
     const sizes = {
@@ -313,10 +315,11 @@ let json = [
         let obj = new THREE.Mesh(geometry, material)
         obj.position.set(data.position[0], data.position[1], data.position[2])
         root.add(obj)
-        const earthDiv = document.createElement( 'div' );
-        earthDiv.className = 'label';
-        earthDiv.textContent = data.name;
-        obj.add(new CSS2DObject( earthDiv ))
+        const label = document.createElement( 'div' );
+        label.className = 'label'
+        label.style.color = '#ffffff'
+        label.textContent = data.name
+        obj.add(new CSS2DObject( label ))
     }
 
     const load = (data) => {

@@ -170,22 +170,6 @@ let json = [
     const theme = {
         mode: "dark"
     }
-    gui.addInput(theme, 'mode', {
-        options:{
-            dark: 'dark',
-            light: "light"
-        }
-    }).on('change', (e) => {
-        // @ts-ignore
-        let doc = document.querySelector(":root").style;
-        let theme = (e.value == "dark" ? mode.dark : mode.light)
-        for (let mod in theme) {
-            doc.setProperty(mod , theme[mod])
-        }
-    })
-    gui.addInput(pointLight.position, 'x')
-    gui.addInput(pointLight.position, 'y')
-    gui.addInput(pointLight.position, 'z')
     
     // Camera
     camera = new THREE.PerspectiveCamera(500, sizes.width / sizes.height, 0.1, 100)
@@ -204,6 +188,25 @@ let json = [
     control = new TrackballControls(camera, renderer.domElement)    
     
     let controls = new OrbitControls(camera, renderer.domElement)
+    
+    gui.addInput(theme, 'mode', {
+        options:{
+            dark: 'dark',
+            light: "light"
+        }
+    }).on('change', (e) => {
+        // @ts-ignore
+        let doc = document.querySelector(":root").style;
+        let theme = (e.value == "dark" ? mode.dark : mode.light)
+        let color = (e.value == "dark" ? 0x1f1f1f : 0xb5b5b5 )
+        renderer.setClearColor( new THREE.Color(color), 1)
+        for (let mod in theme) {
+            doc.setProperty(mod , theme[mod])
+        }
+    })
+    gui.addInput(pointLight.position, 'x')
+    gui.addInput(pointLight.position, 'y')
+    gui.addInput(pointLight.position, 'z')
 
     window.addEventListener('resize', () =>
     {

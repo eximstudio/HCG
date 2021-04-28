@@ -160,9 +160,7 @@ let json = [
     
     // Lights
     const pointLight = new THREE.DirectionalLight(0xffffff, .5)
-    pointLight.position.x = 0
-    pointLight.position.y = 1
-    pointLight.position.z = 0
+    pointLight.position.set(0, 1, 0)
     scene.add(pointLight)
 
     //ambient light

@@ -170,7 +170,7 @@ let json = [
     const theme = {
         mode: "dark"
     }
-    
+
     // Camera
     camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 1, 1000)
     camera.position.set(10, 3, 10)
@@ -353,18 +353,23 @@ let json = [
             addSphere(e)
             data.forEach(m => {
                 let index = m.targets?.findIndex(a => a.ref == e.uid)
-                if (index !== -1){
+                let deli = e.targets?.findIndex(a => a.ref == m.uid)
+
+                if (!([undefined, null, -1].includes(index)) && !([undefined, null, -1].includes(deli))){
                     if (m.targets[index].type == 'double') {
                         addDoubleBond(new THREE.Vector3(e.position[0], e.position[1], e.position[2]), new THREE.Vector3(m.position[0], m.position[1], m.position[2]));
                         m.targets.splice(index, 1)
+                        e.targets.splice(deli, 1)
                     }
                     else if (m.targets[index].type == 'triple') {
                         addTripleBond(new THREE.Vector3(e.position[0], e.position[1], e.position[2]), new THREE.Vector3(m.position[0], m.position[1], m.position[2]));
                         m.targets.splice(index, 1)
+                        e.targets.splice(deli, 1)
                     }
                     else {
                         addSingleBond(new THREE.Vector3(e.position[0], e.position[1], e.position[2]), new THREE.Vector3(m.position[0], m.position[1], m.position[2]))
                         m.targets.splice(index, 1)
+                        e.targets.splice(deli, 1)
                     }
                 }
             })

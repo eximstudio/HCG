@@ -159,14 +159,14 @@ let json = [
 
     
     // Lights
-    const pointLight = new THREE.DirectionalLight(0x4287f5, 2)
+    const pointLight = new THREE.DirectionalLight(0xffffff, .5)
     pointLight.position.x = 0
-    pointLight.position.y = 0
-    pointLight.position.z = 5
+    pointLight.position.y = 1
+    pointLight.position.z = 0
     scene.add(pointLight)
 
     //ambient light
-    const light = new THREE.AmbientLight( 0x404040 ); // soft white light
+    const light = new THREE.AmbientLight(0x404040, 1); // soft white light
     scene.add( light );
     
     const theme = {
@@ -174,11 +174,32 @@ let json = [
     }
     
     // Camera
-    camera = new THREE.PerspectiveCamera(500, sizes.width / sizes.height, 0.1, 100)
-    camera.position.x = 0
-    camera.position.y = 0
-    camera.position.z = 3
+    camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 1, 1000)
+    camera.position.set(10, 3, 10)
     scene.add(camera)
+
+    //Grid
+    let geometry = new THREE.PlaneGeometry(500, 500);
+    let material = new THREE.MeshPhongMaterial({ color: 0x2b2b2b, depthWrite: false });
+
+    let ground = new THREE.Mesh(geometry, material);
+    ground.position.set(0, - 3, 0);
+    ground.rotation.x = - Math.PI / 2;
+	ground.receiveShadow = true;
+	scene.add(ground);
+
+    let grid = new THREE.GridHelper(500, 100, 0x000000, 0x000000);
+    grid.position.y = - 3;
+    // @ts-ignore
+    grid.material.fog = false;
+    // @ts-ignore
+    grid.material.transparent = true;
+    scene.add(grid);
+
+    //Fog
+    scene.fog = new THREE.FogExp2(0x404040, .008)
+    scene.background = new THREE.Color( 0x2b2b2b );
+
     
     // Renderer
     renderer = new THREE.WebGLRenderer({
@@ -196,6 +217,9 @@ let json = [
     document.body.appendChild( labelRenderer.domElement );
 
     let controls = new OrbitControls(camera, labelRenderer.domElement)
+    controls.enableDamping = true
+    controls.maxDistance = 100
+    controls.minDistance = 5
     
     gui.addInput(theme, 'mode', {
         options:{
@@ -206,15 +230,18 @@ let json = [
         // @ts-ignore
         let doc = document.querySelector(":root").style;
         let theme = (e.value == "dark" ? mode.dark : mode.light)
-        let color = (e.value == "dark" ? 0x1f1f1f : 0xb5b5b5 )
-        renderer.setClearColor( new THREE.Color(color), 1)
+        let color = (e.value == "dark" ? 0x2b2b2b : 0xb5b5b5 )
+        scene.background = new THREE.Color( color )
+        ground.material.color = new THREE.Color( color )
+        scene.fog.density = (e.value == "dark" ? .008 : .005)
+
         for (let mod in theme) {
             doc.setProperty(mod , theme[mod])
         }
     })
-    gui.addInput(pointLight.position, 'x')
-    gui.addInput(pointLight.position, 'y')
-    gui.addInput(pointLight.position, 'z')
+    // gui.addInput(pointLight.position, 'x')
+    // gui.addInput(pointLight.position, 'y')
+    // gui.addInput(pointLight.position, 'z')
 
     window.addEventListener('resize', () =>
     {

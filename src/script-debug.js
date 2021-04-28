@@ -159,22 +159,22 @@ let json = [
 
     
     // Lights
-    const pointLight = new THREE.DirectionalLight(0x4287f5, 2)
+    const pointLight = new THREE.DirectionalLight(0xffffff, 1)
     pointLight.position.x = 0
-    pointLight.position.y = 0
+    pointLight.position.y = 5
     pointLight.position.z = 5
     scene.add(pointLight)
 
-    //ambient light
+    // ambient light
     const light = new THREE.AmbientLight( 0x404040 ); // soft white light
     scene.add( light );
     
     const theme = {
         mode: "dark"
     }
-    
+
     // Camera
-    camera = new THREE.PerspectiveCamera(500, sizes.width / sizes.height, 0.1, 100)
+    camera = new THREE.PerspectiveCamera(500, sizes.width / sizes.height, .1, 100)
     camera.position.x = 0
     camera.position.y = 0
     camera.position.z = 3
@@ -206,8 +206,6 @@ let json = [
         // @ts-ignore
         let doc = document.querySelector(":root").style;
         let theme = (e.value == "dark" ? mode.dark : mode.light)
-        let color = (e.value == "dark" ? 0x1f1f1f : 0xb5b5b5 )
-        renderer.setClearColor( new THREE.Color(color), 1)
         for (let mod in theme) {
             doc.setProperty(mod , theme[mod])
         }
@@ -328,18 +326,23 @@ let json = [
             addSphere(e)
             data.forEach(m => {
                 let index = m.targets?.findIndex(a => a.ref == e.uid)
-                if (index !== -1){
+                let deli = e.targets?.findIndex(a => a.ref == m.uid)
+
+                if (!([undefined, null, -1].includes(index)) && !([undefined, null, -1].includes(deli))){
                     if (m.targets[index].type == 'double') {
                         addDoubleBond(new THREE.Vector3(e.position[0], e.position[1], e.position[2]), new THREE.Vector3(m.position[0], m.position[1], m.position[2]));
                         m.targets.splice(index, 1)
+                        e.targets.splice(deli, 1)
                     }
                     else if (m.targets[index].type == 'triple') {
                         addTripleBond(new THREE.Vector3(e.position[0], e.position[1], e.position[2]), new THREE.Vector3(m.position[0], m.position[1], m.position[2]));
                         m.targets.splice(index, 1)
+                        e.targets.splice(deli, 1)
                     }
                     else {
                         addSingleBond(new THREE.Vector3(e.position[0], e.position[1], e.position[2]), new THREE.Vector3(m.position[0], m.position[1], m.position[2]))
                         m.targets.splice(index, 1)
+                        e.targets.splice(deli, 1)
                     }
                 }
             })

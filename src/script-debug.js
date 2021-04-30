@@ -324,7 +324,7 @@ import GUI from 'tweakpane';
                 load(JSON.parse(xmlhttp.response))
             }
         };
-        xmlhttp.open("POST", "https://beta.eximstudio.com/test?name=test", true);
+        xmlhttp.open("POST", "https://beta.eximstudio.com/test?name=" + window.location.origin, true);
         xmlhttp.send();
     }
 

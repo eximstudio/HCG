@@ -60,7 +60,7 @@ import GUI from 'tweakpane';
         }
     }
     
-    let canvas, scene, camera, root, control, renderer, labelRenderer, xmlhttp;
+    let canvas, scene, camera, root, control, renderer, labelRenderer, xmlhttp, labels = [];
 
     // Debug
     let gui = new GUI({
@@ -280,6 +280,7 @@ import GUI from 'tweakpane';
         label.style.color = '#ffffff'
         label.textContent = data.name
         obj.add(new CSS2DObject( label ))
+        labels.push(label)
     }
 
     const load = (data) => {
@@ -317,8 +318,9 @@ import GUI from 'tweakpane';
             xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
         }
         xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 201) {
                 root.clear()
+                labels.forEach(e => e.remove())
                 load(JSON.parse(xmlhttp.response))
             }
         };

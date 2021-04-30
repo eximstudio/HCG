@@ -166,7 +166,7 @@ import GUI from 'tweakpane';
             doc.setProperty(mod , theme[mod])
         }
     })
-    let autorotate = {autoRotate : true};
+    let autorotate = {autoRotate : false};
     gui.addInput(autorotate, 'autoRotate').on('change', (e) => {
         autorotate.autoRotate = e.value;
     })
@@ -192,12 +192,9 @@ import GUI from 'tweakpane';
     })
 
 
-    const clock = new THREE.Clock()
-
     const animate = () =>
     {
              
-        const elapsedTime = clock.getElapsedTime()
         
         // Update objects
         if (autorotate.autoRotate){

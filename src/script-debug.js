@@ -318,6 +318,7 @@ import GUI from 'tweakpane';
         }
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                root.clear()
                 load(JSON.parse(xmlhttp.response))
             }
         };

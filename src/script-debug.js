@@ -8,77 +8,6 @@ import * as dat from 'dat.gui'
 import GUI from 'tweakpane';
 
 //Safety wrapper
-let json = [
-    {
-        name: 'C',
-        uid: '1111',
-        targets: [
-            {
-                "ref": "1112",
-                "type": "single"
-            },
-            {
-                "ref": "1113",
-                "type": "single"
-            },
-            {
-                "ref": "1114",
-                "type": "triple"
-            },
-            {
-                "ref": "1115",
-                "type": "double"
-            }
-        ],
-        color: 0xff0000,
-        radius: 0.3,
-        position: [0, 0, 0]
-    },
-    {
-        name: 'H',
-        uid: '1112',
-        targets: [{
-                "ref": "1111",
-                "type": "single"
-            }],
-        color: 0xff0000,
-        radius: 0.2,
-        position: [0, 0.5, 1.5]
-    },
-    {
-        name: 'H',
-        uid: '1113',
-        targets: [{
-                "ref": "1111",
-                "type": "single"
-            }],
-        color: 0xff0000,
-        radius: 0.2,
-        position: [0, 1, 0]
-    },
-    {
-        name: 'H',
-        uid: '1114',
-        targets: [{
-                "ref": "1111",
-                "type": "triple"
-            }],
-        color: 0xff0000,
-        radius: 0.2,
-        position: [1, 0, 0]
-    },
-    {
-        name: 'H',
-        uid: '1115',
-        targets: [{
-                "ref": "1111",
-                "type": "double"
-            }],
-        color: 0xff0000,
-        radius: 0.2,
-        position: [1, 0, 1]
-    }
-];
 
 (() => {
 
@@ -131,7 +60,7 @@ let json = [
         }
     }
     
-    let canvas, scene, camera, root, control, renderer, labelRenderer;
+    let canvas, scene, camera, root, control, renderer, labelRenderer, xmlhttp;
 
     // Debug
     let gui = new GUI({
@@ -237,6 +166,10 @@ let json = [
             doc.setProperty(mod , theme[mod])
         }
     })
+    let autorotate = {autoRotate : true};
+    gui.addInput(autorotate, 'autoRotate').on('change', (e) => {
+        autorotate.autoRotate = e.value;
+    })
     // gui.addInput(pointLight.position, 'x')
     // gui.addInput(pointLight.position, 'y')
     // gui.addInput(pointLight.position, 'z')
@@ -267,8 +200,10 @@ let json = [
         const elapsedTime = clock.getElapsedTime()
         
         // Update objects
-        root.rotation.y = .5 * elapsedTime
-        root.rotation.x = .1 * elapsedTime
+        if (autorotate.autoRotate){
+            root.rotation.y += .001
+            root.rotation.x += .005
+        }
         
         // Update Orbital Controls
         controls.update()
@@ -375,8 +310,22 @@ let json = [
             })
         });
     }
+    const getjson = () => {
+        if (window.XMLHttpRequest) {
+            xmlhttp = new XMLHttpRequest();
+        } else {
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                load(JSON.parse(xmlhttp.response))
+            }
+        };
+        xmlhttp.open("POST", "https://beta.eximstudio.com/test?name=test", true);
+        xmlhttp.send();
+    }
 
-load(json)
+    gui.addButton({title: 'get', label: 'GET'}).on('click', getjson)
 
 
 })()

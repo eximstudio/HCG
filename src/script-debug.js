@@ -321,10 +321,13 @@ import GUI from 'tweakpane';
                 load(JSON.parse(xmlhttp.response))
             }
         };
-        xmlhttp.open("POST", "https://beta.eximstudio.com/test?name=" + window.location.origin, true);
+        xmlhttp.open("POST", "https://beta.eximstudio.com/test?origin=" + window.location.origin + "&name=" + model.name, true);
         xmlhttp.send();
     }
-
+    let model = {
+        name: ' '
+    }
+    gui.addInput(model, 'name')
     gui.addButton({title: 'get', label: 'GET'}).on('click', getjson)
 
 

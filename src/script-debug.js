@@ -325,7 +325,7 @@ import GUI from 'tweakpane';
         xmlhttp.send();
     }
     let model = {
-        name: ' '
+        name: ''
     }
     gui.addInput(model, 'name')
     gui.addButton({title: 'get', label: 'GET'}).on('click', getjson)

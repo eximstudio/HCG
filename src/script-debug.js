@@ -166,9 +166,9 @@ import GUI from 'tweakpane';
             doc.setProperty(mod , theme[mod])
         }
     })
-    let autorotate = {autoRotate : false};
+    let autorotate = {autoRotate : true};
     gui.addInput(autorotate, 'autoRotate').on('change', (e) => {
-        autorotate.autoRotate = e.value;
+        controls.autoRotate = e.value
     })
     // gui.addInput(pointLight.position, 'x')
     // gui.addInput(pointLight.position, 'y')
@@ -197,10 +197,10 @@ import GUI from 'tweakpane';
              
         
         // Update objects
-        if (autorotate.autoRotate){
-            root.rotation.y += .001
-            root.rotation.x += .005
-        }
+        // if (autorotate.autoRotate){
+        //     root.rotation.y += .001
+        //     root.rotation.x += .005
+        // }
         
         // Update Orbital Controls
         controls.update()

@@ -329,6 +329,9 @@ import GUI from 'tweakpane';
     let model = {
         name: ''
     }
+    gui.addButton({title: 'Auto-Center', label: 'Auto-Center'}).on('click', () => {
+        controls.target = root.position
+    })
     gui.addInput(model, 'name')
     gui.addButton({title: 'get', label: 'GET'}).on('click', getjson)
 

@@ -167,9 +167,9 @@ import GUI from 'tweakpane';
         }
     })
     let autorotate = {autoRotate : true};
-    controls.autoRotate = true
     gui.addInput(autorotate, 'autoRotate').on('change', (e) => {
         controls.autoRotate = e.value
+        autorotate.autoRotate = e.value
     })
     // gui.addInput(pointLight.position, 'x')
     // gui.addInput(pointLight.position, 'y')
@@ -308,6 +308,7 @@ import GUI from 'tweakpane';
                 }
             })
         });
+        controls.autoRotate = autorotate.autoRotate
     }
     const getjson = () => {
         if (window.XMLHttpRequest) {

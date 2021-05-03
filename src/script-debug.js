@@ -167,7 +167,7 @@ import GUI from 'tweakpane';
         }
     })
     let autorotate = {autoRotate : true};
-    controls.autoRotate = autorotate.value
+    controls.autoRotate = true
     gui.addInput(autorotate, 'autoRotate').on('change', (e) => {
         controls.autoRotate = e.value
     })
